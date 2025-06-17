@@ -1,0 +1,108 @@
+-- Load your external script (can run after loading too)
+-- loadstring(game:HttpGet("https://your-github-link.com"))()
+
+local function showCleanLoadingUI()
+    local player = game.Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    -- Hide backpack/tools & remove clutter
+    pcall(function()
+        player:WaitForChild("Backpack"):ClearAllChildren()
+        player.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = 0
+        player.Character:FindFirstChildOfClass("Humanoid").JumpPower = 0
+    end)
+
+    -- Create screen
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "FakeCleanLoadingUI"
+    gui.ResetOnSpawn = false
+    gui.IgnoreGuiInset = true
+    gui.DisplayOrder = 999999 -- ensure top layer
+    gui.Parent = playerGui
+
+    -- Full black background
+    local blackBg = Instance.new("Frame")
+    blackBg.Size = UDim2.new(1, 0, 1, 0)
+    blackBg.BackgroundColor3 = Color3.new(0, 0, 0)
+    blackBg.BorderSizePixel = 0
+    blackBg.Parent = gui
+
+    -- Loading text
+    local loadingText = Instance.new("TextLabel")
+    loadingText.Size = UDim2.new(0, 300, 0, 50)
+    loadingText.Position = UDim2.new(0.5, -150, 0.45, -80)
+    loadingText.BackgroundTransparency = 1
+    loadingText.Text = "Loading..."
+    loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    loadingText.Font = Enum.Font.GothamBold
+    loadingText.TextScaled = true
+    loadingText.Parent = blackBg
+
+    -- Loading bar background
+    local barBg = Instance.new("Frame")
+    barBg.Size = UDim2.new(0.4, 0, 0.05, 0)
+    barBg.Position = UDim2.new(0.3, 0, 0.45, 0)
+    barBg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    barBg.BorderSizePixel = 0
+    barBg.Parent = blackBg
+    barBg.ClipsDescendants = true
+    barBg.BackgroundTransparency = 0
+    barBg.AnchorPoint = Vector2.new(0, 0.5)
+    barBg.BackgroundTransparency = 0
+    barBg.ZIndex = 2
+    barBg.BackgroundTransparency = 0
+    barBg.BorderSizePixel = 0
+    barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    barBg.BorderColor3 = Color3.new(0,0,0)
+
+    -- Rounded corners
+    local corner1 = Instance.new("UICorner")
+    corner1.CornerRadius = UDim.new(0, 8)
+    corner1.Parent = barBg
+
+    -- Loading fill bar
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.new(0, 0, 1, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    fill.BorderSizePixel = 0
+    fill.ZIndex = 3
+    fill.Parent = barBg
+
+    local corner2 = Instance.new("UICorner")
+    corner2.CornerRadius = UDim.new(0, 8)
+    corner2.Parent = fill
+
+    -- % label
+    local percentLabel = Instance.new("TextLabel")
+    percentLabel.Size = UDim2.new(1, 0, 1, 0)
+    percentLabel.BackgroundTransparency = 1
+    percentLabel.Text = "0%"
+    percentLabel.TextColor3 = Color3.new(1, 1, 1)
+    percentLabel.Font = Enum.Font.GothamBold
+    percentLabel.TextScaled = true
+    percentLabel.Parent = barBg
+
+    -- Footer credit
+    local credit = Instance.new("TextLabel")
+    credit.Size = UDim2.new(1, 0, 0, 30)
+    credit.Position = UDim2.new(0, 0, 1, -30)
+    credit.BackgroundTransparency = 1
+    credit.Text = "made by: g3zmar"
+    credit.TextColor3 = Color3.fromRGB(80, 80, 80)
+    credit.Font = Enum.Font.Code
+    credit.TextSize = 14
+    credit.TextXAlignment = Enum.TextXAlignment.Center
+    credit.Parent = blackBg
+
+    -- Animate progress (2 minutes total)
+    for i = 1, 100 do
+        fill.Size = UDim2.new(i / 100, 0, 1, 0)
+        percentLabel.Text = i .. "%"
+        wait(1.2) -- 100 * 1.2 = 120s = 2 minutes
+    end
+
+    loadingText.Text = "Loaded."
+    -- gui:Destroy() -- optional if you want to remove after
+end
+
+showCleanLoadingUI()
